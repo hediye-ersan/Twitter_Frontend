@@ -7,32 +7,38 @@ const Login = ({ setAuthenticated }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
+      const payload = { username, password }; // ✅ Gönderilecek veri
+      console.log("Sending payload:", payload);
+  
       const response = await axios.post(
-        "http://localhost:8080/user/login", // Backend endpoint'ini kontrol et
-        {}, // Basic Auth kullandığımız için body boş
+        "http://localhost:3000/user/login", // ✅ URL doğru mu?
+        payload,
         {
-          auth: {
-            username,
-            password,
-          },
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // CORS ve session desteği için gerekli
+          withCredentials: true, // ✅ Gerekli mi?
         }
       );
-
-      if (response.status === 200) {
-        localStorage.setItem("auth", btoa(`${username}:${password}`)); // Basic Auth bilgilerini sakla
+  
+      console.log("Response:", response); // ✅ Tüm response'u gör
+      console.log("Response Data:", response.data);
+  
+      if (response.status === 200 && response.data.includes("Login successful")) {
+        localStorage.setItem("auth", btoa(`${username}:${password}`));
         setAuthenticated(true);
         alert("Giriş başarılı!");
+      } else {
+        alert("Giriş başarısız! Kullanıcı adı veya şifre hatalı.");
       }
     } catch (error) {
+      console.error("Login error:", error.response?.data || error);
       alert("Giriş başarısız! Kullanıcı adı veya şifre hatalı.");
     }
   };
+  
 
   return (
     <div>

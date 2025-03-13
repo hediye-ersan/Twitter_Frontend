@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 const Register = ({ onRegister }) => {
@@ -10,14 +9,19 @@ const Register = ({ onRegister }) => {
 
     const user = { username, password };
 
-    fetch('http://localhost:3000/register', {
+    fetch('http://localhost:3000/user/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(user),
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(() => {
         onRegister();
       })
