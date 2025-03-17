@@ -1,67 +1,52 @@
-import React, { useState } from "react";
-import axios from "axios";
+// src/components/Login.jsx
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { login } from './api';
 
-const Login = ({ setAuthenticated }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const history = useHistory();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+          const response = await login({ username, password });
+          console.log('Login successful:', response.data);
   
-    try {
-      const payload = { username, password }; // ✅ Gönderilecek veri
-      console.log("Sending payload:", payload);
+          // Kullanıcı adı ve şifreyi Base64 formatına çevir
+          const authToken = btoa(`${username}:${password}`);
+          localStorage.setItem('authToken', authToken);
   
-      const response = await axios.post(
-        "http://localhost:3000/user/login", // ✅ URL doğru mu?
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // ✅ Gerekli mi?
-        }
-      );
-  
-      console.log("Response:", response); // ✅ Tüm response'u gör
-      console.log("Response Data:", response.data);
-  
-      if (response.status === 200 && response.data.includes("Login successful")) {
-        localStorage.setItem("auth", btoa(`${username}:${password}`));
-        setAuthenticated(true);
-        alert("Giriş başarılı!");
-      } else {
-        alert("Giriş başarısız! Kullanıcı adı veya şifre hatalı.");
+          history.push('/tweets'); // Başarılı giriş sonrası Tweetler sayfasına yönlendir
+      } catch (error) {
+          console.error('Login failed:', error);
       }
-    } catch (error) {
-      console.error("Login error:", error.response?.data || error);
-      alert("Giriş başarısız! Kullanıcı adı veya şifre hatalı.");
-    }
   };
   
 
-  return (
-    <div>
-      <h2>Giriş Yap</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Kullanıcı Adı"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Şifre"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Giriş Yap</button>
-      </form>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Login</h2>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    );
 };
 
 export default Login;
