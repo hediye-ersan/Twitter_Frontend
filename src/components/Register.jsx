@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { register } from './api';
 import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Register= () => {
     const [username, setUsername] = useState('');
@@ -12,12 +13,15 @@ const Register= () => {
         e.preventDefault();
         try {
             const response = await register({ username, password });
-            console.log('Registration successful:', response.data);
+            console.log('Register successful:', response.data);
+            // Başarılı kayıt sonrası yönlendirme veya işlem yapabilirsiniz
 
             history.push('/login'); // Başarılı kayıt sonrası giriş sayfasına yönlendir
         } catch (error) {
-            console.error('Registration failed:', error);
+            console.error('Register failed:', error);
+           
         }
+
     };
 
     return (
@@ -73,9 +77,9 @@ const Register= () => {
             <div className="mt-6 text-center text-[#1DA1F2] text-sm">
                 <div className="space-x-1">
                     <span>Already have an account?</span>
-                    <a href="/login" className="hover:underline font-medium">
+                    <Link to="/login" className="hover:underline font-medium">
                         Log in
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>
