@@ -1,4 +1,3 @@
-// src/components/Tweets.jsx
 import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar"; // react-avatar import edildi
 import { fetchTweets } from "./api";
@@ -6,6 +5,29 @@ import { FaRegComment, FaRetweet, FaRegHeart } from "react-icons/fa";
 
 const Tweets = () => {
     const [tweets, setTweets] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);  // Kullanıcı bilgisini state'e ekliyoruz
+
+    useEffect(() => {
+        const getUserInfo = async () => {
+            const authToken = localStorage.getItem('authToken');
+            if (authToken) {
+                try {
+                    const response = await fetch('http://localhost:3000/user/current-user', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Basic ${authToken}`,
+                        }
+                    });
+                    const userData = await response.json();
+                    setCurrentUser(userData);  // Kullanıcıyı state'e kaydediyoruz
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                }
+            }
+        };
+
+        getUserInfo();
+    }, []);
 
     useEffect(() => {
         const getTweets = async () => {
@@ -28,7 +50,12 @@ const Tweets = () => {
 
             {/* Tweet Yazma Alanı */}
             <div className="p-4 border-b flex items-center">
-                <Avatar name="User" size="48" round={true} className="mr-4" />
+                <Avatar
+                    name={currentUser ? currentUser.username : "User"}  // Eğer kullanıcı verisi varsa onu kullanıyoruz
+                    size="48"
+                    round={true}
+                    className="mr-4"
+                />
                 <input
                     type="text"
                     placeholder="What's happening?"
