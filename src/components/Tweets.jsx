@@ -1,6 +1,8 @@
 // src/components/Tweets.jsx
 import React, { useEffect, useState } from "react";
+import Avatar from "react-avatar"; // react-avatar import edildi
 import { fetchTweets } from "./api";
+import { FaRegComment, FaRetweet, FaRegHeart } from "react-icons/fa";
 
 const Tweets = () => {
     const [tweets, setTweets] = useState([]);
@@ -20,26 +22,67 @@ const Tweets = () => {
     }, []);
 
     return (
-        <div>
-            <h2>Tweets</h2>
-            <ul style={{ border: "1px solid red", padding: "10px" }}>  
+        <div className="max-w-lg mx-auto bg-white shadow-md rounded-lg">
+            {/* Üst Kısım - Sayfa Başlığı */}
+            <h2 className="text-xl font-bold p-4 border-b">Home</h2>
+
+            {/* Tweet Yazma Alanı */}
+            <div className="p-4 border-b flex items-center">
+                <Avatar name="User" size="48" round={true} className="mr-4" />
+                <input
+                    type="text"
+                    placeholder="What's happening?"
+                    className="w-full p-2 border rounded-full text-lg focus:outline-none"
+                />
+            </div>
+
+            {/* Tweet Listesi */}
+            <ul>
                 {tweets.length > 0 ? (
                     tweets.map((tweet) => (
-                        <li 
-                            key={tweet.id} 
-                            style={{ 
-                                color: "black", 
-                                fontSize: "18px", 
-                                display: "block", 
-                                padding: "5px", 
-                                borderBottom: "1px solid gray" 
-                            }}
-                        >
-                            <strong>{tweet.username}:</strong> {tweet.text}
+                        <li key={tweet.id} className="flex border-b p-4 hover:bg-gray-100">
+                            {/* Profil Resmi (react-avatar kullanıldı) */}
+                            <Avatar 
+                                name={tweet.username} 
+                                src={tweet.profilePic} 
+                                size="48" 
+                                round={true} 
+                                className="mr-4"
+                            />
+
+                            {/* Tweet İçeriği */}
+                            <div className="flex-1">
+                                <div className="flex items-center space-x-2">
+                                    <span className="font-bold">{tweet.username}</span>
+                                    <span className="text-gray-500">@{tweet.username} · 1m</span>
+                                </div>
+                                <p className="text-gray-800">{tweet.text}</p>
+
+                                {/* Tweet İçinde Görsel Varsa */}
+                                {tweet.image && (
+                                    <img src={tweet.image} alt="Tweet Media" className="rounded-lg mt-2" />
+                                )}
+
+                                {/* Etkileşim Butonları */}
+                                <div className="flex justify-between text-gray-500 mt-3 text-sm">
+                                    <div className="flex items-center space-x-1 cursor-pointer hover:text-blue-500">
+                                        <FaRegComment />
+                                        <span>3</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1 cursor-pointer hover:text-green-500">
+                                        <FaRetweet />
+                                        <span>5</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1 cursor-pointer hover:text-red-500">
+                                        <FaRegHeart />
+                                        <span>14</span>
+                                    </div>
+                                </div>
+                            </div>
                         </li>
                     ))
                 ) : (
-                    <p style={{ color: "red" }}>No tweets available</p>
+                    <p className="text-center text-red-500 py-4">No tweets available</p>
                 )}
             </ul>
         </div>
