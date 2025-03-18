@@ -20,6 +20,15 @@ export const register = async (userData) => {
     return axios.post(`${API_URL}/register`, userData);
 };
 
+export const postTweet = async (tweet) => {
+    const token = localStorage.getItem('authToken'); // Token'i localStorage'dan alın
+    return await axios.post('http://localhost:3000/tweets/user/{userId}', tweet, {
+        headers: {
+            Authorization: `Bearer ${token}` // Yetkilendirme başlığını ekleyin
+        }
+    });
+};
+
 export const fetchTweets = async () => {
     const token = localStorage.getItem('authToken');
 
@@ -29,7 +38,7 @@ export const fetchTweets = async () => {
 
     return axios.get(`http://localhost:3000/tweets`, {
         headers: {
-            'Authorization': `Basic ${token}` // Basic Auth formatı: "Basic <base64(username:password)>"
+            'Authorization': `Basic ${token}` 
         }
     });
 };
